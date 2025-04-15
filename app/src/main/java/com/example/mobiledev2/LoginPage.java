@@ -1,11 +1,16 @@
 package com.example.mobiledev2;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,9 +40,13 @@ public class LoginPage extends AppCompatActivity {
     Button btnLogin, btnDaftar;
     EditText EdUser, EdPass;
     TextView TvForgot;
+    CheckBox cbRememberMe;
+    ImageView ivTogglePassword;
+    private boolean isPasswordVisible = false;
     String URL = "http://10.0.2.2/login_akun/login.php";
 
-
+    private static final String PREF_NAME = "login_pref";
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,6 +63,34 @@ public class LoginPage extends AppCompatActivity {
         EdUser = findViewById(R.id.edUsername);
         EdPass = findViewById(R.id.edPassword);
         TvForgot = findViewById(R.id.TvForgot);
+        cbRememberMe = findViewById(R.id.cbRememberMe);
+        ivTogglePassword = findViewById(R.id.ivTogglePassword);
+
+        SharedPreferences preferences = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
+        String savedUsername = preferences.getString("username", "");
+        String savedPassword = preferences.getString("password", "");
+        boolean isRemembered = preferences.getBoolean("remember", false);
+
+        if (isRemembered) {
+            EdUser.setText(savedUsername);
+            EdPass.setText(savedPassword);
+            cbRememberMe.setChecked(true);
+        }
+
+        ivTogglePassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                isPasswordVisible = !isPasswordVisible;
+                if (isPasswordVisible) {
+                    EdPass.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                    ivTogglePassword.setImageResource(R.drawable.baseline_visibility_24); // ganti dengan icon mata terbuka
+                } else {
+                    EdPass.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                    ivTogglePassword.setImageResource(R.drawable.baseline_visibility_off_24); // icon mata tertutup
+                }
+                EdPass.setSelection(EdPass.getText().length()); // cursor tetap di akhir
+            }
+        });
 
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override

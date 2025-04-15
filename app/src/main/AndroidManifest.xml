@@ -21,9 +21,6 @@
             android:name=".RegisterPage"
             android:exported="false" />
         <activity
-            android:name=".ResetPassword"
-            android:exported="false" />
-        <activity
             android:name=".LupaPassword"
             android:exported="false" />
         <activity

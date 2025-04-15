@@ -1,17 +1,21 @@
 package com.example.mobiledev2;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.android.volley.Request;
@@ -31,21 +35,54 @@ public class RegisterPage extends AppCompatActivity {
 
     EditText etUsername, etPassword;
     Button btnRegister;
+    ImageView Visibile;
     String URL = "http://10.0.2.2/login_akun/register.php";
+    private static final String PREF_NAME = "register_pref";
+    private boolean isPasswordVisible = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
         setContentView(R.layout.activity_register_page); // Pastikan layout sudah ada
+        View rootView = findViewById(R.id.daftar);
+        ViewCompat.setOnApplyWindowInsetsListener(rootView, (view, insets) -> {
+            Insets statusBarInsets = insets.getInsets(WindowInsetsCompat.Type.statusBars());
+            view.setPadding(
+                    view.getPaddingLeft(),
+                    statusBarInsets.top,
+                    view.getPaddingRight(),
+                    view.getPaddingBottom()
+            );
+            return insets;
+        });
+
 
         etUsername = findViewById(R.id.etUsername);
         etPassword = findViewById(R.id.etPassword);
         btnRegister = findViewById(R.id.btnRegister);
+        Visibile = findViewById(R.id.visibility);
 
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 registerUser();
+            }
+        });
+
+        Visibile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                isPasswordVisible = !isPasswordVisible;
+                if (isPasswordVisible) {
+                    etPassword.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                    Visibile.setImageResource(R.drawable.baseline_visibility_24); // ganti dengan icon mata terbuka
+                } else {
+                    etPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                    Visibile.setImageResource(R.drawable.baseline_visibility_off_24); // icon mata tertutup
+                }
+                etPassword.setSelection(etPassword.getText().length()); // cursor tetap di akhir
             }
         });
     }

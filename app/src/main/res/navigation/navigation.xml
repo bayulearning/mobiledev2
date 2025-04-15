@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation"
+    app:startDestination="@id/first">
+
+    <fragment
+        android:id="@+id/first"
+        android:name="com.example.mobiledev2.first"
+        android:label="Home"
+        tools:layout="@layout/fragment_first" />
+    <fragment
+        android:id="@+id/second"
+        android:name="com.example.mobiledev2.second"
+        android:label="Booking"
+        tools:layout="@layout/fragment_second" />
+    <fragment
+        android:id="@+id/third"
+        android:name="com.example.mobiledev2.third"
+        android:label="Notification"
+        tools:layout="@layout/fragment_third" />
+    <fragment
+        android:id="@+id/fourth"
+        android:name="com.example.mobiledev2.fourth"
+        android:label="Profil"
+        tools:layout="@layout/fragment_fourth" />
+</navigation>
