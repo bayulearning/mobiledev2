@@ -2,10 +2,13 @@ package com.example.mobiledev2;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.media.Image;
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -31,8 +34,10 @@ import java.util.Map;
 public class LupaPassword extends AppCompatActivity {
 
     EditText etUsernameLupa, etPassword;
+    ImageView lihat;
     Button btnResetPassword;
     String URL = "http://10.0.2.2/login_akun/update.php";
+    private boolean isPasswordVisible = false;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -49,7 +54,22 @@ public class LupaPassword extends AppCompatActivity {
         etUsernameLupa = findViewById(R.id.etUsernameLupa);
         etPassword = findViewById(R.id.etNewPassword);
         btnResetPassword = findViewById(R.id.btnResetPassword);
+        lihat = findViewById(R.id.lihat);
 
+        lihat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                isPasswordVisible = !isPasswordVisible;
+                if (isPasswordVisible) {
+                    etPassword.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                    lihat.setImageResource(R.drawable.baseline_visibility_24); // ganti dengan icon mata terbuka
+                } else {
+                    etPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                    lihat.setImageResource(R.drawable.baseline_visibility_off_24); // icon mata tertutup
+                }
+                etPassword.setSelection(etPassword.getText().length()); // cursor tetap di akhir
+            }
+        });
 
         btnResetPassword.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -58,7 +58,6 @@ public class RegisterPage extends AppCompatActivity {
             return insets;
         });
 
-
         etUsername = findViewById(R.id.etUsername);
         etPassword = findViewById(R.id.etPassword);
         btnRegister = findViewById(R.id.btnRegister);
