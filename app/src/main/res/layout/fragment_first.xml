@@ -105,26 +105,26 @@
 
     </androidx.cardview.widget.CardView>
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/roundedIconButton"
-        android:layout_width="wrap_content"
-        android:layout_height="100dp"
-        android:backgroundTint="@color/design_default_color_primary_variant"
-        android:icon="@drawable/baseline_library_music_24"
-        android:paddingHorizontal="24dp"
-        android:paddingVertical="12dp"
-
-        app:iconSize="24dp"
-        style="@style/RoundedButtonStyle"
-        android:textColor="@android:color/white"
-        app:layout_constraintBottom_toTopOf="@+id/textView9"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/relativeLayout"
-        app:layout_constraintVertical_bias="0.664"
-        android:iconTint="@android:color/white"
-        android:iconPadding="8dp"
-        app:cornerRadius="100dp" />
+<!--    <com.google.android.material.button.MaterialButton-->
+<!--        android:id="@+id/roundedIconButton"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="100dp"-->
+<!--        android:backgroundTint="@color/design_default_color_primary_variant"-->
+<!--        android:icon="@drawable/baseline_library_music_24"-->
+<!--        android:paddingHorizontal="24dp"-->
+<!--        android:paddingVertical="12dp"-->
+<!--        android:contentDescription="button"-->
+<!--        app:iconSize="24dp"-->
+<!--        style="@style/RoundedButtonStyle"-->
+<!--        android:textColor="@android:color/white"-->
+<!--        app:layout_constraintBottom_toTopOf="@+id/textView9"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/relativeLayout"-->
+<!--        app:layout_constraintVertical_bias="0.664"-->
+<!--        android:iconTint="@android:color/white"-->
+<!--        android:iconPadding="8dp"-->
+<!--        app:cornerRadius="100dp" />-->
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
