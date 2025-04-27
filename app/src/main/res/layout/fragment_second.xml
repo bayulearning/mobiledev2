@@ -4,17 +4,220 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/backgroundlogin"
     tools:context=".second">
 
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
+    <!-- Header -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout2"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="SECOND FRAGMENT"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/imageView3"
+            android:layout_width="171dp"
+            android:layout_height="108dp"
+            android:layout_marginTop="8dp"
+            android:src="@drawable/naga"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/textView18"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/blinker_bold"
+            android:text="ARENA X FUTSAL"
+            android:textSize="34sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imageView3" />
+
+        <TextView
+            android:id="@+id/textView25"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/blinker_bold"
+            android:text="Booking"
+            android:textSize="34sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView18" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- Pilihan Tanggal & Lapangan -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout3"
+        android:layout_width="0dp"
+        android:layout_height="200dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout2">
+
+        <Button
+            android:id="@+id/btnPilihTanggal"
+            android:layout_width="180dp"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#EEEEEE"
+            android:text="📅 Pilih Tanggal"
+            android:textColor="#333"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvTanggalDipilih"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:padding="16dp"
+            android:textColor="#070707"
+            android:textSize="12sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/btnPilihTanggal" />
+
+        <Button
+            android:id="@+id/lap1"
+            android:layout_width="190dp"
+            android:layout_height="100dp"
+            android:backgroundTint="#E6BA74"
+            android:fontFamily="@font/blinker_bold"
+            android:text="Lapangan 1"
+            android:textColor="#020202"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvTanggalDipilih" />
+
+        <Button
+            android:id="@+id/lap2"
+            android:layout_width="190dp"
+            android:layout_height="100dp"
+            android:backgroundTint="#E6BA74"
+            android:fontFamily="@font/blinker_bold"
+            android:text="Lapangan 2"
+            android:textColor="#020202"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvTanggalDipilih" />
+
+        <TextView
+            android:id="@+id/pilih_lapangan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/blinker_light"
+            android:text="Pilih lapangan terlebih dahulu"
+            android:textColor="#F40404"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.498"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvTanggalDipilih"
+            app:layout_constraintVertical_bias="0.982" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- FlexboxLayout untuk tombol jam -->
+    <com.google.android.flexbox.FlexboxLayout
+        android:id="@+id/gridJam"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        app:alignItems="center"
+        app:flexWrap="wrap"
+        app:justifyContent="center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.5" />
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout3" />
+
+
+    <!-- Tombol kembali -->
+
+    <!-- Tombol Booking -->
+    <RelativeLayout
+        android:id="@+id/relativeLayout2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/gridJam"
+        app:layout_constraintVertical_bias="0.115">
+
+        <Button
+            android:id="@+id/btnreset"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginEnd="24dp"
+            android:layout_toStartOf="@+id/bookingnow"
+            android:backgroundTint="#E6BA74"
+            android:fontFamily="@font/blinker_bold"
+            android:text="Reset"
+            android:textColor="@color/black" />
+
+        <Button
+            android:id="@+id/bookingnow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="31dp"
+            android:backgroundTint="#E6BA74"
+            android:fontFamily="@font/blinker_bold"
+            android:text="Booking Now"
+            android:textColor="#020202" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayout4"
+            android:layout_width="60dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="32dp"
+            android:background="@drawable/background_oval"
+            android:backgroundTint="#E6BA74">
+
+            <ImageView
+                android:id="@+id/imageView6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/back"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/hargacontainer"
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.151"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/relativeLayout2"
+        app:layout_constraintVertical_bias="0.074">
+
+        <TextView
+            android:id="@+id/tvharga"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
+            android:fontFamily="@font/blinker_bold"
+            android:text="Total Harga   :"
+            android:textSize="30sp" />
+
+        <TextView
+            android:id="@+id/tvnominal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="200dp"
+            android:fontFamily="@font/blinker_bold"
+            android:text=""
+            android:textSize="30sp" />
+
+    </RelativeLayout>
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

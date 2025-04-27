@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    tools:context=".HargaFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+    <TextView
+        android:id="@+id/tvharga"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Total Harga   :"
+        android:fontFamily="@font/blinker_bold"
+        android:textSize="30sp"
+        android:layout_marginStart="30dp"
+        />
+
+    <TextView
+        android:id="@+id/tvnominal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:layout_alignParentStart="true"
+        android:textSize="30sp"
+        android:fontFamily="@font/blinker_bold"
+        android:layout_marginStart="200dp"/>
+
+</RelativeLayout>
