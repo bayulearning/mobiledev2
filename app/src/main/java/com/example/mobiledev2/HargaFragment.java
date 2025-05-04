@@ -125,7 +125,7 @@ public class HargaFragment extends Fragment {
                         if (jsonResponse.has("token")) {
                             String token = jsonResponse.getString("token");
                             // Proses token pembayaran
-                            MidtransSDK.getInstance().startPaymentUiFlow(getContext(), token);
+                            MidtransSDK.getInstance().startPaymentUiFlow(requireActivity(), token);
                         } else {
                             Log.e("Error", "Token tidak ditemukan dalam response");
                         }

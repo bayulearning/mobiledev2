@@ -133,7 +133,7 @@ public class second extends Fragment {
 
         SdkUIFlowBuilder.init()
                 .setClientKey("YOUR_CLIENT_KEY_FROM_MIDTRANS") // Client key kamu
-                .setContext(getContext())
+                .setContext(requireActivity())
                 .setTransactionFinishedCallback(new TransactionFinishedCallback() {
                     @Override
                     public void onTransactionFinished(TransactionResult result) {
@@ -143,6 +143,7 @@ public class second extends Fragment {
                 .setMerchantBaseUrl("https://yourdomain.com/") // URL server PHP kamu
                 .enableLog(true) // Untuk debugging
                 .buildSDK();
+
 
 
         // Awal, sembunyikan jam
@@ -204,9 +205,12 @@ public class second extends Fragment {
         Button btnBookingNow = view.findViewById(R.id.bookingnow);
 
         btnBookingNow.setOnClickListener(v -> {
+
+            String snapToken = "TOKEN_DARI_BACKEND"; // token ini kamu ambil dari API kamu
+            startPayment(snapToken);
             String URL = "http://10.0.2.2/login_akun/create_transaction.php"; // Ganti sesuai URL PHP-mu
 
-            RequestQueue queue = Volley.newRequestQueue(getContext());
+            RequestQueue queue = Volley.newRequestQueue(requireActivity());
 
             StringRequest request = new StringRequest(Request.Method.POST, URL,
                     response -> {
@@ -216,7 +220,7 @@ public class second extends Fragment {
                             if (jsonResponse.has("token")) {
                                 String snap = jsonResponse.getString("token");
                                 // Proses token pembayaran
-                                MidtransSDK.getInstance().startPaymentUiFlow(getActivity(), snap);
+                                MidtransSDK.getInstance().startPaymentUiFlow(requireActivity(), snap);
                             } else {
                                 Log.e("Error", "Token tidak ditemukan dalam response");
                             }
@@ -282,6 +286,35 @@ public class second extends Fragment {
 
         return view;
     }
+
+        public void startPayment(String snapToken){
+                // 1. Panggil API ke server untuk minta Snap Token
+                getSnapTokenDariServer(new TokenCallback() {
+                    @Override
+                    public void onTokenReceived(String snapToken) {
+                        // 2. Setelah dapat Snap Token, buka Midtrans UI
+                        requireActivity().runOnUiThread(() -> {
+                            MidtransSDK.getInstance().startPaymentUiFlow(requireActivity(), snapToken);
+                        });
+                    }
+
+                    @Override
+                    public void onError(String errorMessage) {
+                        Toast.makeText(requireContext(), "Gagal dapat token: " + errorMessage, Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+
+            private void getSnapTokenDariServer(TokenCallback callback) {
+                // 🔥 Ini simulasi. Nanti ganti dengan API call kamu, misal pakai Retrofit / Volley.
+                String fakeSnapToken = "34d0c13f-76c8-49f1-be18-33ab1221971a";
+                callback.onTokenReceived(fakeSnapToken);
+            }
+
+            interface TokenCallback {
+                void onTokenReceived(String token);
+                void onError(String errorMessage);
+            }
 
 
     private void updateHargaCheckout() {
