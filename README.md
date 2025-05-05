@@ -9,7 +9,7 @@ https://www.figma.com/design/pZ9oM0kWzio4kEKMzpEfuk/Figma-basics?node-id=1669-16
 
 # Perancangan Aplikasi
 
-Proggress Yang Telah Kami Selesaikan Sebesar
+Total Progress Dari Project Kami Sebesar
 
 ### [xxxxxxxxxxxxxxxxxxxxxxxxxxxx--------------] 72,33%
 
