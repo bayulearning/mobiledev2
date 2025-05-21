@@ -45,10 +45,7 @@ public class HargaFragment extends Fragment {
     private TextView hargaTextView;
     private int hargaPerJam = 80000;
     int amount = 0;
-    public HargaFragment() {
 
-        // Required empty public constructor
-    }
 
     /**
      * Use this factory method to create a new instance of
@@ -84,26 +81,46 @@ public class HargaFragment extends Fragment {
         hargaTextView = view.findViewById(R.id.tvnominal);
 
 
+        // Jika sebelumnya sudah ada jumlah jam, tampilkan
+        if (jumlahJamPending >= 0) {
+            updateHarga(jumlahJamPending);
+        }
 
         return view;
     }
+    private int jumlahJamPending = -1;  // -1 artinya belum di-set
+    private int hargaTotalTerakhir = 0; // <- simpan nilai terbaru di sini
 
     public String getHarga() {
         if (hargaTextView != null) {
-            // Mengambil nilai dari TextView dan menghapus "Rp" dan koma
-            String hargaString = hargaTextView.getText().toString();
-            return hargaString.replaceAll("[^0-9]", ""); // Menghapus semua karakter selain angka
+            String text = hargaTextView.getText().toString();
+            Log.d("GET_HARGA", "TextView value: " + text);
+            return text.replaceAll("[^0-9]", "");
+        } else {
+            Log.e("GET_HARGA", "hargaTextView masih null");
         }
-        return "0"; // Jika TextView null, kembalikan default "0"
+        return "0";
     }
+
+
 
     // Fungsi untuk update harga
     public void updateHarga(int jumlahJam) {
-        int totalHarga = jumlahJam * hargaPerJam;
+        int jamBayar = Math.max(jumlahJam - 1, 0);
+        int totalHarga = jamBayar * hargaPerJam;
+
+        Log.d("HARGA", "jumlahJam = " + jumlahJam + ", totalHarga = " + totalHarga);
+
         if (hargaTextView != null) {
             hargaTextView.setText("Rp" + totalHarga + ",-");
+        } else {
+            Log.e("HARGA", "hargaTextView masih null di updateHarga()");
         }
     }
+
+
+
+//    keteranganJam + " dipilih\n" +
 
     // Fungsi untuk mengambil nilai harga dan mengirimkan ke server
     public void kirimRequest() {

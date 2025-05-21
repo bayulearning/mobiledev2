@@ -1,6 +1,8 @@
 package com.example.mobiledev2;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -148,6 +150,11 @@ public class LoginPage extends AppCompatActivity {
                             Toast.makeText(LoginPage.this, message, Toast.LENGTH_SHORT).show();
 
                             if (status.equals("success")) {
+                                SharedPreferences sharedPref = getSharedPreferences("UserSession", Context.MODE_PRIVATE);
+                                SharedPreferences.Editor editor = sharedPref.edit();
+                                editor.putString("username", username ); // userFromServer = username dari response
+                                editor.apply();
+
                                 Intent intent = new Intent(LoginPage.this, HomePage.class);
                                 startActivity(intent);
                                 finish();

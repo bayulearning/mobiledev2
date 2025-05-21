@@ -2,19 +2,28 @@ package com.example.mobiledev2;
 
 
 
+import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,7 +38,9 @@ import com.google.android.material.datepicker.MaterialDatePicker;
 
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -57,7 +68,9 @@ import org.json.JSONObject;
  */
 public class second extends Fragment {
     private FlexboxLayout timeContainer;
-    private String selectedTime = "";
+//    private String selectedTime = "";
+    private List<String> selectedTimes = new ArrayList<>();
+
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -123,7 +136,11 @@ public class second extends Fragment {
         Button btnLapangan1 = view.findViewById(R.id.lap1);
         Button btnLapangan2 = view.findViewById(R.id.lap2);
         Button btnReset = view.findViewById(R.id.btnreset);
-        TextView hargaTextView = view.findViewById(R.id.tvnominal);
+
+
+         // ID dari RelativeLayout
+
+
 
 
 // Inisialisasi MidtransSDK// Ganti dengan clientKey dan environment yang sesuai
@@ -152,6 +169,7 @@ public class second extends Fragment {
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
         transaction.replace(R.id.hargacontainer, new HargaFragment());
         transaction.commit();
+
 
         // Daftar jam tersedia
         List<String> timeList = Arrays.asList("09:00", "10:00", "11:00", "12:00", "13:00", "14:00",
@@ -202,72 +220,158 @@ public class second extends Fragment {
 
             });
         });
+
+        // Setelah tombol lapangan dibuat
+//        loadHargaFragment();
+
+//        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+//            updateHargaCheckout();
+//        }, 300);
+
         Button btnBookingNow = view.findViewById(R.id.bookingnow);
 
         btnBookingNow.setOnClickListener(v -> {
+            HargaFragment hargaFragment = (HargaFragment) getChildFragmentManager().findFragmentById(R.id.hargacontainer);
 
-            String snapToken = "TOKEN_DARI_BACKEND"; // token ini kamu ambil dari API kamu
-            startPayment(snapToken);
-            String URL = "http://10.0.2.2/login_akun/create_transaction.php"; // Ganti sesuai URL PHP-mu
+            if (hargaFragment != null) {
+                String hargaString = hargaFragment.getHarga(); // misalnya method ini mengembalikan isi dari TextView
+                Log.d("TAG", "Harga saat ini: " + hargaString);
+            }
+            // Cek apakah tombol sudah pernah diklik sebelumnya untuk mencegah klik ganda
+            btnBookingNow.setEnabled(false);  // Nonaktifkan tombol agar tidak bisa diklik dua kali
+            // Menampilkan konfirmasi sebelum melanjutkan booking
+            new AlertDialog.Builder(requireContext())
+                    .setTitle("Konfirmasi Booking")
+                    .setMessage("Apakah Anda yakin ingin melakukan booking?")
+                    .setPositiveButton("Ya", (dialog, which) -> {
+                        // Proses booking
+                        String URL = "http://10.0.2.2/login_akun/booking.php"; // URL server untuk proses booking
 
-            RequestQueue queue = Volley.newRequestQueue(requireActivity());
-
-            StringRequest request = new StringRequest(Request.Method.POST, URL,
-                    response -> {
-                        try {
-                            // Tangani response yang diterima
-                            JSONObject jsonResponse = new JSONObject(response);
-                            if (jsonResponse.has("token")) {
-                                String snap = jsonResponse.getString("token");
-                                // Proses token pembayaran
-                                MidtransSDK.getInstance().startPaymentUiFlow(requireActivity(), snap);
-                            } else {
-                                Log.e("Error", "Token tidak ditemukan dalam response");
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                        if (selectedTimes.isEmpty()) {
+                            Toast.makeText(requireContext(), "Pilih minimal 1 jam", Toast.LENGTH_SHORT).show();
+                            return;
                         }
-                    },
-                    error -> {
-                        error.printStackTrace();
-                    }
-            ) {
-                @Override
-                protected Map<String, String> getParams() {
-                    // Tidak perlu menggunakan getParams() karena kita mengirimkan data dalam JSON body
-                    return null;
-                }
 
-                // Menambahkan header Content-Type untuk JSON
-                @Override
-                public Map<String, String> getHeaders() throws AuthFailureError {
-                    Map<String, String> headers = new HashMap<>();
-                    headers.put("Content-Type", "application/json"); // Tentukan header yang diperlukan
-                    return headers;
-                }
+                        // 1. Urutkan dan ambil jam awal dan akhir
+                        Collections.sort(selectedTimes);
+                        String jamAwal = selectedTimes.get(0);
+                        String jamAkhir = selectedTimes.get(selectedTimes.size() - 1);
+                        String jamFinal = jamAwal.equals(jamAkhir) ? jamAwal : jamAwal + "-" + jamAkhir ;
 
-                // Menyusun JSON Body untuk request
-                @Override
-                public byte[] getBody() throws AuthFailureError {
-                    try {
+                        // Lanjutkan proses booking ke server, misalnya:
+                        Log.d("JamFinal", jamFinal);
 
-                        HargaFragment hargaFragment = (HargaFragment) getChildFragmentManager().findFragmentById(R.id.hargacontainer);
+                        if (hargaFragment != null) {
+                            int jumlahJamDipilih = (currentLapangan == 1) ? selectedTimesLapangan1.size() : selectedTimesLapangan2.size();
+                            hargaFragment.updateHarga(jumlahJamDipilih);
+                        }
 
-                        String harga = (hargaFragment != null) ? hargaFragment.getHarga() : "0";
-                        JSONObject jsonObject = new JSONObject();
-                        jsonObject.put("amount", "0" + harga  ); // Data yang dikirim
-                        return jsonObject.toString().getBytes("utf-8");
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        return super.getBody();
-                    } catch (UnsupportedEncodingException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-            };
+                        SharedPreferences sharedPref = requireActivity().getSharedPreferences("UserSession", Context.MODE_PRIVATE);
+                        String user = sharedPref.getString("username", ""); // "" jika belum login
 
-            queue.add(request);
+                        // Data yang ingin dikirim
+                        // Bisa ambil dari SharedPreferences atau EditText
+                        String tanggal = tanggalDipilih;
+                        String status = "menunggu pembayaran";
 
+
+                        RequestQueue queue = Volley.newRequestQueue(requireActivity());
+                        StringRequest request = new StringRequest(Request.Method.POST, URL,
+                                response -> {
+                                    Log.d("Response", response);
+                                    try {
+                                        // Parse response dari server
+                                        JSONObject obj = new JSONObject(response);
+                                        String resultStatus = obj.getString("status");
+                                        String message = obj.getString("message");
+
+                                        // Tampilkan pesan status ke user
+                                        Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show();
+
+                                        // Jika booking sukses, ubah status atau tampilan di fragment yang sama
+                                        if (resultStatus.equals("success")) {
+                                            // Menonaktifkan tombol booking agar tidak bisa diklik lagi
+                                            btnBookingNow.setEnabled(false); // Menonaktifkan tombol
+                                        }
+                                    } catch (JSONException e) {
+                                        Log.e("JSON Error", e.getMessage());
+                                        Toast.makeText(requireContext(), "Format respon error", Toast.LENGTH_SHORT).show();
+                                        btnBookingNow.setEnabled(true); // Aktifkan tombol lagi jika terjadi error
+                                    }
+                                },
+                                error -> {
+                                    Toast.makeText(requireContext(), "Request error", Toast.LENGTH_SHORT).show();
+                                    btnBookingNow.setEnabled(true); // Aktifkan tombol lagi jika request gagal
+                                }) {
+                            @Override
+                            protected Map<String, String> getParams() {
+                                Map<String, String> params = new HashMap<>();
+                                params.put("nama", user); // sesuaikan dengan nama POST di PHP
+                                params.put("tanggal", tanggal);
+                                params.put("lapangan", String.valueOf(currentLapangan));
+                                params.put("jam", jamFinal );
+                                params.put("status", status);
+                                String bayar = hargaFragment != null ? hargaFragment.getHarga() : "0"; // Ambil harga dari fragment
+                                params.put("bayar", bayar);
+                                return params;
+                            }
+                        };
+
+
+//                        try {
+//                            Log.e("FULL_RESPONSE", "Response: " + response);
+//                            JSONObject jsonResponse = new JSONObject(response);
+//                            if (jsonResponse.has("token")) {
+//                                String snapToken = jsonResponse.getString("token");
+//                                MidtransSDK.getInstance().startPaymentUiFlow(requireActivity(), snapToken);
+//                            } else {
+//                                Log.e("Error", "Token tidak ditemukan dalam response");
+//                            }
+//                        } catch (JSONException e) {
+//                            e.printStackTrace();
+//                        }
+//                    },
+//                    error -> {
+//                        error.printStackTrace();
+//                    }
+//            ) {
+//                @Override
+//                protected Map<String, String> getParams() {
+//                    return null;  // Tidak dipakai
+//                }
+//
+//                @Override
+//                public Map<String, String> getHeaders() throws AuthFailureError {
+//                    Map<String, String> headers = new HashMap<>();
+//                    headers.put("Content-Type", "application/json");
+//                    return headers;
+//                }
+//
+//                @Override
+//                public byte[] getBody() throws AuthFailureError {
+//                    try {
+//                        HargaFragment hargaFragment = (HargaFragment) getChildFragmentManager().findFragmentById(R.id.hargacontainer);
+//                        String harga = (hargaFragment != null) ? hargaFragment.getHarga() : "0";
+//
+//                        JSONObject jsonObject = new JSONObject();
+//                        jsonObject.put("amount", harga);
+//
+//                        return jsonObject.toString().getBytes("utf-8");
+//                    } catch (JSONException | UnsupportedEncodingException e) {
+//                        e.printStackTrace();
+//                        return null;
+//                    }
+//                }
+
+                        queue.add(request);
+
+                    })
+                    .setNegativeButton("Batal", (dialog, which) -> {
+                        // Mengaktifkan tombol kembali jika pengguna membatalkan
+                        btnBookingNow.setEnabled(true);
+                        dialog.dismiss(); // Tutup dialog
+                    })
+                    .show(); // Tampilkan dialog konfirmasi
         });
         // --- Atur listener tombol Reset ---
         btnReset.setOnClickListener(v -> {
@@ -278,13 +382,32 @@ public class second extends Fragment {
                 selectedTimesLapangan2.clear();
                 bookedTimesLapangan2.remove(tanggalDipilih);
             }
-            // Setelah tombol lapangan dibuat
-            loadHargaFragment();
 
             updateJamUI();
+
+
+
         });
 
         return view;
+    }
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        // Panggil setelah layout selesai dibuat
+        loadHargaFragment();
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            HargaFragment hargaFragment = (HargaFragment) getChildFragmentManager()
+                    .findFragmentById(R.id.hargacontainer);
+
+            if (hargaFragment != null) {
+                int jumlahJamDipilih = (currentLapangan == 1) ? selectedTimesLapangan1.size() : selectedTimesLapangan2.size();
+                hargaFragment.updateHarga(jumlahJamDipilih);
+            } else {
+                Log.e("HARGA", "HargaFragment masih null");
+            }
+        }, 300); // tunda 300ms
+
     }
 
         public void startPayment(String snapToken){
@@ -328,12 +451,14 @@ public class second extends Fragment {
     }
 
 
+    private HargaFragment hargaFragment;
+
     private void loadHargaFragment() {
+        hargaFragment = new HargaFragment(); // ← simpan ke variabel global
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-        transaction.replace(R.id.hargacontainer, new HargaFragment());
+        transaction.replace(R.id.hargacontainer, hargaFragment);
         transaction.commit();
     }
-
 
     private void updateJamUI() {
         // Jika belum memilih lapangan (misalnya 0 = belum dipilih)
@@ -437,9 +562,20 @@ public class second extends Fragment {
             btn.setLayoutParams(params);
 
             btn.setOnClickListener(v -> {
-                selectedTime = time;
+                Button clickedButton = (Button) v;
+                String jam = clickedButton.getText().toString();
+
+                if (selectedTimes.contains(jam)) {
+                    selectedTimes.remove(jam);
+                    clickedButton.setBackgroundColor(Color.BLACK); // tidak dipilih
+                } else {
+                    selectedTimes.add(jam);
+                    clickedButton.setBackgroundColor(Color.GREEN); // dipilih
+                }
                 pilihJam((Button) v);
+                Log.d("SelectedTimes", selectedTimes.toString());
             });
+
 
             timeContainer.addView(btn);
         }
@@ -472,8 +608,6 @@ public class second extends Fragment {
             btn.setBackgroundResource(R.drawable.arrow);
             btn.setSelected(true);
         }
-
-
 
     }
 

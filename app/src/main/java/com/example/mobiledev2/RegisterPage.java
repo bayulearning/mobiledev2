@@ -1,5 +1,6 @@
 package com.example.mobiledev2;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -33,13 +34,14 @@ import java.util.Map;
 
 public class RegisterPage extends AppCompatActivity {
 
-    EditText etUsername, etPassword;
+    EditText etUsername, etPassword, etAlamat, etPhone, etEmail;
     Button btnRegister;
     ImageView Visibile;
     String URL = "http://10.0.2.2/login_akun/register.php";
     private static final String PREF_NAME = "register_pref";
     private boolean isPasswordVisible = false;
 
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,6 +62,9 @@ public class RegisterPage extends AppCompatActivity {
 
         etUsername = findViewById(R.id.etUsername);
         etPassword = findViewById(R.id.etPassword);
+        etAlamat   = findViewById(R.id.Alamat);
+        etPhone = findViewById(R.id.Phone);
+        etEmail = findViewById(R.id.Email);
         btnRegister = findViewById(R.id.btnRegister);
         Visibile = findViewById(R.id.visibility);
 
@@ -88,6 +93,9 @@ public class RegisterPage extends AppCompatActivity {
     private void registerUser() {
         String username = etUsername.getText().toString().trim();
         String password = etPassword.getText().toString().trim();
+        String alamat = etAlamat.getText().toString().trim();
+        String phone = etPhone.getText().toString().trim();
+        String email = etEmail.getText().toString().trim();
 
         if (username.isEmpty() || password.isEmpty()) {
             Toast.makeText(this, "Isi semua field!", Toast.LENGTH_SHORT).show();
@@ -128,6 +136,9 @@ public class RegisterPage extends AppCompatActivity {
                 Map<String, String> params = new HashMap<>();
                 params.put("username", username);
                 params.put("password", password);
+                params.put("alamat", alamat);
+                params.put("email", email);
+                params.put("phone", phone);
                 return params;
             }
         };
