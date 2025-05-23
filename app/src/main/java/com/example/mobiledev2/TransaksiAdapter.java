@@ -55,6 +55,7 @@ public class TransaksiAdapter extends RecyclerView.Adapter<TransaksiAdapter.View
         holder.txtBayar.setText("Bayar: " + trx.getBayar());
         holder.txtJam.setText("Jam: " + trx.getJam());
         holder.btnBayar.setOnClickListener(v -> {
+            bayarClickListener.onBayarClick(transaksiList.get(position));
         });
     }
 

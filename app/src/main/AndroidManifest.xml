@@ -35,6 +35,8 @@
         <activity
             android:name=".LoginPage"
             android:exported="false">
+
+
         </activity>
     </application>
 
