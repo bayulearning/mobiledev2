@@ -2,4 +2,9 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="biru_status">#2196F3</color>
+    <color name="hijau_status">#4CAF50</color>
+    <color name="merah_status">#F44336</color>
+    <color name="abu_status">#9E9E9E</color>
+
 </resources>

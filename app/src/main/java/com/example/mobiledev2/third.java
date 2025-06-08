@@ -2,6 +2,7 @@ package com.example.mobiledev2;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
@@ -20,6 +21,7 @@ import android.widget.Toast;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.midtrans.sdk.corekit.callback.TransactionFinishedCallback;
@@ -32,10 +34,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -98,88 +102,116 @@ public class third extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         transaksiList = new ArrayList<>();
+
+// Inisialisasi Midtrans SDK
         SdkUIFlowBuilder.init()
                 .setClientKey("YOUR_CLIENT_KEY_FROM_MIDTRANS") // Client key kamu
                 .setContext(requireActivity())
                 .setTransactionFinishedCallback(new TransactionFinishedCallback() {
                     @Override
                     public void onTransactionFinished(TransactionResult result) {
-                        // Handle setelah transaksi selesai
+                        Log.d("MidtransCallback", "Callback dijalankan: " + (result != null ? result.getStatus() : "null"));
+                        if (result != null && result.getResponse() != null) {
+                            switch (result.getStatus()) {
+                                case TransactionResult.STATUS_SUCCESS:
+                                    Log.d("Midtrans", "Pembayaran berhasil: " + result.getResponse().getTransactionId());
+                                    Toast.makeText(getContext(), "Pembayaran sukses!", Toast.LENGTH_LONG).show();
+
+                                    // Pindah ke halaman sukses
+                                    Intent intent = new Intent(getActivity(), StatusPayment.class);
+                                    intent.putExtra("order_id", result.getResponse().getTransactionId());
+                                    startActivity(intent);
+                                    break;
+
+                                case TransactionResult.STATUS_PENDING:
+                                    Log.d("Midtrans", "Menunggu pembayaran");
+                                    Toast.makeText(getContext(), "Menunggu pembayaran", Toast.LENGTH_LONG).show();
+                                    break;
+
+                                case TransactionResult.STATUS_FAILED:
+                                    Log.d("Midtrans", "Transaksi gagal");
+                                    Toast.makeText(getContext(), "Transaksi gagal", Toast.LENGTH_LONG).show();
+                                    break;
+                            }
+                        } else if (result != null && result.isTransactionCanceled()) {
+                            Toast.makeText(getContext(), "Transaksi dibatalkan", Toast.LENGTH_LONG).show();
+                        } else {
+                            Toast.makeText(getContext(), "Transaksi tidak valid", Toast.LENGTH_LONG).show();
+                        }
                     }
                 })
-                .setMerchantBaseUrl("https://yourdomain.com/") // URL server PHP kamu
+
+                .setMerchantBaseUrl("https://app.sandbox.midtrans.com/snap/v4/redirection/") // URL server PHP kamu
                 .enableLog(true) // Untuk debugging
                 .buildSDK();
 
-        adapter = new TransaksiAdapter(transaksiList, new TransaksiAdapter.OnBayarClickListener() {
-            @Override
-            public void onBayarClick(Transaksi transaksi) {
-                String URL = "http://10.0.2.2/login_akun/create_transaction.php";
-
-                RequestQueue queue = Volley.newRequestQueue(requireActivity());
-                final Transaksi transaksiYangDipilih = transaksi;
-                StringRequest request = new StringRequest(Request.Method.POST, URL,
-                        response -> {
-                            try {
-                                Log.e("FULL_RESPONSE", "Response: " + response);
-                                JSONObject jsonResponse = new JSONObject(response);
-                                if (jsonResponse.has("token")) {
-                                    String snapToken = jsonResponse.getString("token");
-                                    MidtransSDK.getInstance().startPaymentUiFlow(requireActivity(), snapToken);
-                                } else {
-                                    Log.e("Error", "Token tidak ditemukan dalam response");
-                                }
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        },
-                        error -> {
-                            error.printStackTrace();
-                        }
-                ) {
-                    @Override
-                    protected Map<String, String> getParams() {
-                        return null;  // Tidak dipakai
-                    }
-
-                    @Override
-                    public Map<String, String> getHeaders() throws AuthFailureError {
-                        Map<String, String> headers = new HashMap<>();
-                        headers.put("Content-Type", "application/json");
-                        return headers;
-                    }
-
-                    @Override
-                    public byte[] getBody() throws AuthFailureError {
-                        try {
-                            JSONObject jsonObject = new JSONObject();
-                            jsonObject.put("amount", transaksiYangDipilih.getBayar()); // langsung ambil dari objek
-                            jsonObject.put("username", transaksiYangDipilih.getNama());
-                            jsonObject.put("jam", transaksiYangDipilih.getJam());
-
-                            return jsonObject.toString().getBytes("utf-8");
-                        } catch (JSONException | UnsupportedEncodingException e) {
-                            e.printStackTrace();
-                            return null;
-                        }
-                    }
-                };
-
-                queue.add(request);
-            }
+        adapter = new TransaksiAdapter(transaksiList, transaksi -> {
+            String url = "http://10.0.2.2/login_akun/create_transaction.php";
+            mintaSnapTokenDariServer(transaksi.getIdTransaksi(), transaksi.getNama(), url);
         });
 
         recyclerView.setAdapter(adapter);
-
-        // Panggil ambil data dari server
-        fetchBookingData();
+        fetchBookingData(); // Ambil data dari server
 
         return view;
+    }
+    private void mintaSnapTokenDariServer(String idTransaksi,String username, String url) {
+        Log.d("SnapRequest", "ID Transaksi: " + idTransaksi);
+        try {
+            JSONObject json = new JSONObject();
+            json.put("id_transaksi", idTransaksi);
+            json.put("username", username);
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url, json,
+                    response -> {
+                        Log.d("SnapTokenResponse", response.toString());
+                        try {
+                            if (response.has("token")) {
+                                String token = response.getString("token");
+                                Log.d("SNAP_TOKEN", "Token: " + token);
+                                MidtransSDK.getInstance().startPaymentUiFlow(getActivity(), token);
+                            } else {
+                                Toast.makeText(requireContext(), "Token tidak ditemukan", Toast.LENGTH_SHORT).show();
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    },
+                    error -> {
+                        if (error instanceof AuthFailureError) {
+                            // Tangani error otentikasi (misalnya header API key yang salah)
+                            Log.e("AuthError", "Authentication failed: " + error.getMessage());
+                            Toast.makeText(requireContext(), "Otentikasi gagal", Toast.LENGTH_SHORT).show();
+                        } else if (error.networkResponse != null && error.networkResponse.data != null) {
+                            // Ambil body response error dalam bentuk string
+                            String responseBody = new String(error.networkResponse.data, StandardCharsets.UTF_8);
+                            Log.e("VolleyError", responseBody);
+                        } else {
+                            Toast.makeText(requireContext(), "Gagal meminta token", Toast.LENGTH_SHORT).show();
+                        }
+                    }) {
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String> headers = new HashMap<>();
+                    headers.put("Content-Type", "application/json"); // Ini WAJIB
+                    return headers;
+                }
+
+                @Override
+                public String getBodyContentType() {
+                    return "application/json"; // Pastikan body dianggap JSON oleh server
+                }
+            };
+
+            Volley.newRequestQueue(requireContext()).add(request);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     public void fetchBookingData() {
         SharedPreferences sharedPref = getActivity().getSharedPreferences("UserSession", Context.MODE_PRIVATE);
         String username = sharedPref.getString("username", "");
+        Log.d("DebugUsername", "Username dari SharedPreferences: " + username);
 
         if (username.isEmpty()) {
             Toast.makeText(getActivity(), "Username tidak ditemukan di session", Toast.LENGTH_SHORT).show();
@@ -211,8 +243,11 @@ public class third extends Fragment {
                             String nama = bookingJson.getString("nama");
                             String totalBayar = bookingJson.getString("bayar");
                             String totalJam = bookingJson.getString("jam");
-
-                            transaksiList.add(new Transaksi(nama, totalBayar, totalJam));
+                            String idTransaksi = bookingJson.getString("id");
+                            String orderId = bookingJson.getString("order_id");
+                            String status = bookingJson.getString("status_pembayaran");
+                            Log.d("ParseTransaksi", "Item ke-" + i + ": " + nama + ", bayar: " + totalBayar);
+                            transaksiList.add(new Transaksi(nama, totalBayar, totalJam, idTransaksi, status, orderId));
                         }
 
                         adapter.notifyDataSetChanged();
@@ -228,35 +263,5 @@ public class third extends Fragment {
 
         queue.add(stringRequest);
     }
-
-    public void startPayment(String snapToken){
-        // 1. Panggil API ke server untuk minta Snap Token
-        getSnapTokenDariServer(new second.TokenCallback() {
-            @Override
-            public void onTokenReceived(String snapToken) {
-                // 2. Setelah dapat Snap Token, buka Midtrans UI
-                requireActivity().runOnUiThread(() -> {
-                    MidtransSDK.getInstance().startPaymentUiFlow(requireActivity(), snapToken);
-                });
-            }
-
-            @Override
-            public void onError(String errorMessage) {
-                Toast.makeText(requireContext(), "Gagal dapat token: " + errorMessage, Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    private void getSnapTokenDariServer(second.TokenCallback callback) {
-        // 🔥 Ini simulasi. Nanti ganti dengan API call kamu, misal pakai Retrofit / Volley.
-        String fakeSnapToken = "34d0c13f-76c8-49f1-be18-33ab1221971a";
-        callback.onTokenReceived(fakeSnapToken);
-    }
-
-    interface TokenCallback {
-        void onTokenReceived(String token);
-        void onError(String errorMessage);
-    }
-
 
 }

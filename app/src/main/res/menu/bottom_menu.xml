@@ -7,9 +7,10 @@
     <item android:title="Booking"
         android:icon="@drawable/booking"
         android:id="@+id/book"/>
-    <item android:title="Notif"
-        android:icon="@drawable/baseline_notifications_24"
-        android:id="@+id/notif"/>
+    <item
+        android:id="@+id/notif"
+        android:icon="@drawable/baseline_shopping_cart_checkout_24"
+        android:title="Checkout" />
     <item android:title="Profil"
         android:icon="@drawable/bottom_profil"
         android:id="@+id/profil"/>

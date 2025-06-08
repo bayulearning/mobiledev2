@@ -1,5 +1,6 @@
 package com.example.mobiledev2;
 
+import android.graphics.drawable.GradientDrawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +9,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.AuthFailureError;
@@ -51,13 +53,57 @@ public class TransaksiAdapter extends RecyclerView.Adapter<TransaksiAdapter.View
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Transaksi trx = transaksiList.get(position);
+
+        Log.d("BindView", "Menampilkan: " + trx.getNama());
         holder.txtNama.setText("Nama: " + trx.getNama());
         holder.txtBayar.setText("Bayar: " + trx.getBayar());
         holder.txtJam.setText("Jam: " + trx.getJam());
+
+        // Status Pembayaran
+        String status = trx.getStatus() != null ? trx.getStatus().toLowerCase() : "";
+        holder.txtStatus.setText("Status Pembayaran: \n" + status);
+
+        // Ubah warna background tergantung status
+        GradientDrawable bgDrawable = (GradientDrawable) holder.txtStatus.getBackground();
+
+        switch (status.toLowerCase()) {
+            case "pending":
+                bgDrawable.setColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.biru_status));
+                break;
+            case "settlement":
+                bgDrawable.setColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.hijau_status));
+                break;
+            case "cancel":
+            case "expire":
+                bgDrawable.setColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.merah_status));
+                break;
+            default:
+                bgDrawable.setColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.abu_status));
+                break;
+        }
+
+
+        holder.txtId.setText(trx.getIdTransaksi());
+
+
+        // Atur tombol bayar berdasarkan status pembayaran
+        if (status.equals("settlement")) {
+            holder.btnBayar.setEnabled(false);
+            holder.btnBayar.setAlpha(0.5f); // tampilan tombol transparan, terlihat disable
+            holder.btnBayar.setText("Sudah Dibayar");
+        } else {
+            holder.btnBayar.setEnabled(true);
+            holder.btnBayar.setAlpha(1.0f);
+            holder.btnBayar.setText("Bayar Sekarang");
+        }
+
         holder.btnBayar.setOnClickListener(v -> {
-            bayarClickListener.onBayarClick(transaksiList.get(position));
+            if (holder.btnBayar.isEnabled()) {
+                bayarClickListener.onBayarClick(transaksiList.get(position));
+            }
         });
     }
+
 
     @Override
     public int getItemCount() {
@@ -65,13 +111,16 @@ public class TransaksiAdapter extends RecyclerView.Adapter<TransaksiAdapter.View
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        TextView txtNama, txtBayar, txtJam;
+        TextView txtNama, txtBayar, txtJam, txtStatus, txtId, txtorderId;
         Button btnBayar;
         public ViewHolder(View itemView) {
             super(itemView);
             txtNama = itemView.findViewById(R.id.nama);
             txtBayar = itemView.findViewById(R.id.total_bayar);
             txtJam = itemView.findViewById(R.id.total_jam);
+            txtStatus = itemView.findViewById(R.id.updatestatus);
+            txtId = itemView.findViewById(R.id.idTransaksi);
+            txtorderId = itemView.findViewById(R.id.OrderID);
             btnBayar = itemView.findViewById(R.id.btnBayar);
         }
     }

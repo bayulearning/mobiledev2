@@ -310,7 +310,7 @@ public class second extends Fragment {
                                 params.put("tanggal", tanggal);
                                 params.put("lapangan", String.valueOf(currentLapangan));
                                 params.put("jam", jamFinal );
-                                params.put("status", status);
+                                params.put("status_pembayaran", status);
                                 String bayar = hargaFragment != null ? hargaFragment.getHarga() : "0"; // Ambil harga dari fragment
                                 params.put("bayar", bayar);
                                 return params;
