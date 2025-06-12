@@ -14,8 +14,8 @@
         android:id="@+id/constraintLayout5"
         android:layout_width="380dp"
         android:layout_height="180dp"
-        android:background="#FFFFFF"
         android:layout_gravity="center_horizontal"
+        android:background="#FFFFFF"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView">
@@ -55,11 +55,12 @@
             android:id="@+id/linearLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
+            android:layout_marginStart="189dp"
+            android:layout_marginBottom="8dp"
             android:orientation="vertical"
             card_view:layout_constraintBottom_toTopOf="@+id/btnBayar"
             card_view:layout_constraintEnd_toEndOf="parent"
-            card_view:layout_constraintHorizontal_bias="0.611"
+            card_view:layout_constraintHorizontal_bias="0.0"
             card_view:layout_constraintStart_toStartOf="parent">
 
             <TextView
@@ -87,7 +88,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:fontFamily="@font/blinker_bold"
-                android:text="Total Jam        :"
+                android:text="Jam                         :"
                 app:layout_constraintStart_toEndOf="@+id/textView2"
                 app:layout_constraintTop_toBottomOf="@+id/textView6" />
 
@@ -105,7 +106,7 @@
 
         <Button
             android:id="@+id/btnBayar"
-            android:layout_width="100dp"
+            android:layout_width="wrap_content"
             android:layout_height="50dp"
             android:backgroundTint="#E6BA74"
             android:fontFamily="@font/blinker_bold"
@@ -173,32 +174,38 @@
 
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/OrderID"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text=""
+            android:layout_marginStart="189dp"
+            android:orientation="vertical"
             card_view:layout_constraintBottom_toBottomOf="parent"
             card_view:layout_constraintEnd_toEndOf="parent"
-            card_view:layout_constraintHorizontal_bias="0.19"
-            card_view:layout_constraintStart_toEndOf="@+id/btnBayar"
-            card_view:layout_constraintTop_toBottomOf="@+id/linearLayout2"
-            card_view:layout_constraintVertical_bias="0.175" />
+            card_view:layout_constraintHorizontal_bias="0.0"
+            card_view:layout_constraintStart_toStartOf="parent"
+            card_view:layout_constraintTop_toBottomOf="@+id/linearLayout">
 
-        <TextView
-            android:id="@+id/updatestatus"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/background_status"
-            android:fontFamily="@font/blinker_bold"
-            android:padding="8dp"
-            android:text=""
-            card_view:layout_constraintBottom_toBottomOf="parent"
-            card_view:layout_constraintEnd_toEndOf="parent"
-            card_view:layout_constraintHorizontal_bias="0.485"
-            card_view:layout_constraintStart_toEndOf="@+id/btnBayar"
-            card_view:layout_constraintTop_toTopOf="parent"
-            card_view:layout_constraintVertical_bias="0.829" />
+            <TextView
+                android:id="@+id/lapangan"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:fontFamily="@font/blinker_bold"
+                android:text="TextView"
+                android:layout_gravity="center_horizontal"
+                />
+
+            <TextView
+                android:id="@+id/updatestatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/background_status"
+                android:fontFamily="@font/blinker_bold"
+                android:padding="8dp"
+                android:textAlignment="center"
+                android:text="" />
+
+        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 </androidx.cardview.widget.CardView>

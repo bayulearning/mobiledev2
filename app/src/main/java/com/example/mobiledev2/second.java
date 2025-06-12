@@ -34,12 +34,16 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.flexbox.FlexboxLayout;
+import com.google.android.material.datepicker.CalendarConstraints;
+import com.google.android.material.datepicker.DateValidatorPointForward;
 import com.google.android.material.datepicker.MaterialDatePicker;
 
 import java.io.UnsupportedEncodingException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -58,6 +62,7 @@ import com.midtrans.sdk.uikit.SdkUIFlowBuilder;
 import com.midtrans.sdk.uikit.external.UiKitApi;
 
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -68,8 +73,8 @@ import org.json.JSONObject;
  */
 public class second extends Fragment {
     private FlexboxLayout timeContainer;
-//    private String selectedTime = "";
     private List<String> selectedTimes = new ArrayList<>();
+    private Set<String> jamTerbooking = new HashSet<>();
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -105,7 +110,7 @@ public class second extends Fragment {
 
     private Set<String> selectedTimesLapangan1 = new HashSet<>();
     private Set<String> selectedTimesLapangan2 = new HashSet<>();
-    private int currentLapangan = 1; // default lapangan
+    private int currentLapangan = 0; // default lapangan
     Map<String, Set<String>> bookedTimesLapangan1 = new HashMap<>();
     Map<String, Set<String>> bookedTimesLapangan2 = new HashMap<>();
     private String tanggalDipilih = ""; // untuk menyimpan tanggal yang dipilih
@@ -137,39 +142,12 @@ public class second extends Fragment {
         Button btnLapangan2 = view.findViewById(R.id.lap2);
         Button btnReset = view.findViewById(R.id.btnreset);
 
-
-         // ID dari RelativeLayout
-
-
-
-
-// Inisialisasi MidtransSDK// Ganti dengan clientKey dan environment yang sesuai
-
-        // Setelah token diterima dari server, panggil startPaymentUiFlow
-        // Dapatkan snapToken yang valid dari server
-
-        SdkUIFlowBuilder.init()
-                .setClientKey("YOUR_CLIENT_KEY_FROM_MIDTRANS") // Client key kamu
-                .setContext(requireActivity())
-                .setTransactionFinishedCallback(new TransactionFinishedCallback() {
-                    @Override
-                    public void onTransactionFinished(TransactionResult result) {
-                        // Handle setelah transaksi selesai
-                    }
-                })
-                .setMerchantBaseUrl("https://yourdomain.com/") // URL server PHP kamu
-                .enableLog(true) // Untuk debugging
-                .buildSDK();
-
-
-
         // Awal, sembunyikan jam
-        timeContainer.setVisibility(View.GONE);
+        timeContainer.setVisibility(View.VISIBLE);
 
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
         transaction.replace(R.id.hargacontainer, new HargaFragment());
         transaction.commit();
-
 
         // Daftar jam tersedia
         List<String> timeList = Arrays.asList("09:00", "10:00", "11:00", "12:00", "13:00", "14:00",
@@ -177,22 +155,29 @@ public class second extends Fragment {
 
         // Generate tombol jam, tapi sembunyikan
         generateTimeButtons(timeList);
-
         // --- Atur listener tombol Lapangan ---
         btnLapangan1.setOnClickListener(v -> {
             switchLapangan(1);
             highlightLapanganButton(btnLapangan1, btnLapangan2);
+            ambilJamTerbookingDariServer(tanggalDipilih, String.valueOf(currentLapangan));
         });
 
         btnLapangan2.setOnClickListener(v -> {
             switchLapangan(2);
             highlightLapanganButton(btnLapangan2, btnLapangan1);
+            ambilJamTerbookingDariServer(tanggalDipilih, String.valueOf(currentLapangan));
         });
 
         // --- Atur listener tombol pilih tanggal ---
         btnPilihTanggal.setOnClickListener(v -> {
+            CalendarConstraints.Builder constraintsBuilder = new CalendarConstraints.Builder();
+
+            // Set tanggal minimum ke hari ini
+            constraintsBuilder.setValidator(DateValidatorPointForward.now());
+
             MaterialDatePicker<Long> datePicker = MaterialDatePicker.Builder.datePicker()
                     .setTitleText("Pilih Tanggal Booking")
+                    .setCalendarConstraints(constraintsBuilder.build())
                     .build();
 
             datePicker.show(getParentFragmentManager(), "DATE_PICKER");
@@ -200,33 +185,15 @@ public class second extends Fragment {
             datePicker.addOnPositiveButtonClickListener(selection -> {
                 tanggalDipilih = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
                         .format(new Date(selection));
-
                 btnPilihTanggal.setText(tanggalDipilih);
                 tvTanggalDipilih.setText("Tanggal Dipilih: " + tanggalDipilih);
-
-                // Bersihkan pilihan jam user (jika ganti tanggal)
-                selectedTimesLapangan1.clear();
-                selectedTimesLapangan2.clear();
-
-                // Hapus semua jam di UI
-                resetAllSelections();
-
-                // Sembunyikan dulu tombol jam kalau belum pilih lapangan
-                timeContainer.setVisibility(currentLapangan == 0 ? View.GONE : View.VISIBLE);
-
+                switchLapangan(currentLapangan);
                 if (currentLapangan != 0) {
-                    updateJamUI();
+                    ambilJamTerbookingDariServer(tanggalDipilih, String.valueOf(currentLapangan));
                 }
-
             });
         });
 
-        // Setelah tombol lapangan dibuat
-//        loadHargaFragment();
-
-//        new Handler(Looper.getMainLooper()).postDelayed(() -> {
-//            updateHargaCheckout();
-//        }, 300);
 
         Button btnBookingNow = view.findViewById(R.id.bookingnow);
 
@@ -316,53 +283,6 @@ public class second extends Fragment {
                                 return params;
                             }
                         };
-
-
-//                        try {
-//                            Log.e("FULL_RESPONSE", "Response: " + response);
-//                            JSONObject jsonResponse = new JSONObject(response);
-//                            if (jsonResponse.has("token")) {
-//                                String snapToken = jsonResponse.getString("token");
-//                                MidtransSDK.getInstance().startPaymentUiFlow(requireActivity(), snapToken);
-//                            } else {
-//                                Log.e("Error", "Token tidak ditemukan dalam response");
-//                            }
-//                        } catch (JSONException e) {
-//                            e.printStackTrace();
-//                        }
-//                    },
-//                    error -> {
-//                        error.printStackTrace();
-//                    }
-//            ) {
-//                @Override
-//                protected Map<String, String> getParams() {
-//                    return null;  // Tidak dipakai
-//                }
-//
-//                @Override
-//                public Map<String, String> getHeaders() throws AuthFailureError {
-//                    Map<String, String> headers = new HashMap<>();
-//                    headers.put("Content-Type", "application/json");
-//                    return headers;
-//                }
-//
-//                @Override
-//                public byte[] getBody() throws AuthFailureError {
-//                    try {
-//                        HargaFragment hargaFragment = (HargaFragment) getChildFragmentManager().findFragmentById(R.id.hargacontainer);
-//                        String harga = (hargaFragment != null) ? hargaFragment.getHarga() : "0";
-//
-//                        JSONObject jsonObject = new JSONObject();
-//                        jsonObject.put("amount", harga);
-//
-//                        return jsonObject.toString().getBytes("utf-8");
-//                    } catch (JSONException | UnsupportedEncodingException e) {
-//                        e.printStackTrace();
-//                        return null;
-//                    }
-//                }
-
                         queue.add(request);
 
                     })
@@ -374,20 +294,19 @@ public class second extends Fragment {
                     .show(); // Tampilkan dialog konfirmasi
         });
         // --- Atur listener tombol Reset ---
-        btnReset.setOnClickListener(v -> {
-            if (currentLapangan == 1) {
-                selectedTimesLapangan1.clear();
-                bookedTimesLapangan1.remove(tanggalDipilih);
-            } else if (currentLapangan == 2) {
-                selectedTimesLapangan2.clear();
-                bookedTimesLapangan2.remove(tanggalDipilih);
-            }
-
-            updateJamUI();
-
-
-
-        });
+//        btnReset.setOnClickListener(v -> {
+//            if (currentLapangan == 1) {
+//                selectedTimesLapangan1.clear();
+//                bookedTimesLapangan1.remove(tanggalDipilih);
+//            } else if (currentLapangan == 2) {
+//                selectedTimesLapangan2.clear();
+//                bookedTimesLapangan2.remove(tanggalDipilih);
+//            }
+//            resetAllSelections();
+//            ambilJamTerbookingDariServer(tanggalDipilih, String.valueOf(currentLapangan));
+//            List<String> jamTerbooking = new ArrayList<>();
+//            updateJamUI(jamTerbooking);
+//        });
 
         return view;
     }
@@ -410,25 +329,36 @@ public class second extends Fragment {
 
     }
 
-        public void startPayment(String snapToken){
-                // 1. Panggil API ke server untuk minta Snap Token
-                getSnapTokenDariServer(new TokenCallback() {
-                    @Override
-                    public void onTokenReceived(String snapToken) {
-                        // 2. Setelah dapat Snap Token, buka Midtrans UI
-                        requireActivity().runOnUiThread(() -> {
-                            MidtransSDK.getInstance().startPaymentUiFlow(requireActivity(), snapToken);
-                        });
-                    }
+    private void ambilJamTerbookingDariServer(String tanggal, String lapangan) {
+        String url = "http://10.0.2.2/login_akun/get_jam_terpesan.php?tanggal=" + tanggal + "&lapangan=" + lapangan;
 
-                    @Override
-                    public void onError(String errorMessage) {
-                        Toast.makeText(requireContext(), "Gagal dapat token: " + errorMessage, Toast.LENGTH_SHORT).show();
+        RequestQueue queue = Volley.newRequestQueue(getContext());
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                response -> {
+                    try {
+                        JSONArray jsonArray = new JSONArray(response);
+                        List<String> jamTerbooking = new ArrayList<>();
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            jamTerbooking.add(jsonArray.getString(i));
+                        }
+
+                        updateJamUI(jamTerbooking); // <-- Pastikan ini berjalan
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Toast.makeText(getContext(), "Format data salah", Toast.LENGTH_SHORT).show();
                     }
+                },
+                error -> {
+                    Toast.makeText(getContext(), "Gagal mengambil data booking", Toast.LENGTH_SHORT).show();
                 });
-            }
 
-            private void getSnapTokenDariServer(TokenCallback callback) {
+        queue.add(stringRequest);
+    }
+
+
+    private void getSnapTokenDariServer(TokenCallback callback) {
                 // 🔥 Ini simulasi. Nanti ganti dengan API call kamu, misal pakai Retrofit / Volley.
                 String fakeSnapToken = "34d0c13f-76c8-49f1-be18-33ab1221971a";
                 callback.onTokenReceived(fakeSnapToken);
@@ -450,6 +380,57 @@ public class second extends Fragment {
         }
     }
 
+    private void updateTimeButtonStatus(String tanggalDipilih) {
+        SimpleDateFormat sdfJam = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
+        SimpleDateFormat sdfTanggal = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        String today = sdfTanggal.format(new Date());
+
+        for (int i = 0; i < timeContainer.getChildCount(); i++) {
+            View child = timeContainer.getChildAt(i);
+            if (child instanceof Button) {
+                Button btn = (Button) child;
+                String jam = btn.getText().toString();
+                boolean disable = false;
+
+                // Tanggal belum dipilih
+                if (tanggalDipilih == null || tanggalDipilih.isEmpty()) {
+                    disable = true;
+                }
+
+                // Waktu sudah lewat (hanya jika tanggal == hari ini)
+                else if (tanggalDipilih.equals(today)) {
+                    try {
+                        Date now = new Date();
+                        Date timeDate = sdfJam.parse(jam);
+                        Calendar calTarget = Calendar.getInstance();
+                        calTarget.setTime(timeDate);
+
+                        Calendar calNow = Calendar.getInstance();
+                        calNow.set(Calendar.HOUR_OF_DAY, calTarget.get(Calendar.HOUR_OF_DAY));
+                        calNow.set(Calendar.MINUTE, calTarget.get(Calendar.MINUTE));
+                        calNow.set(Calendar.SECOND, 0);
+
+                        if (now.after(calNow.getTime())) {
+                            disable = true;
+                        }
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                // Jam sudah dibooking dari server
+                if (jamTerbooking != null && jamTerbooking.contains(jam)) {
+                    disable = true;
+                    btn.setBackgroundResource(R.drawable.background_stack); // Opsional: beri warna
+                }
+
+                // Set final status tombol
+                btn.setEnabled(!disable);
+                btn.setAlpha(disable ? 0.5f : 1.0f);
+            }
+        }
+    }
+
 
     private HargaFragment hargaFragment;
 
@@ -460,47 +441,23 @@ public class second extends Fragment {
         transaction.commit();
     }
 
-    private void updateJamUI() {
-        // Jika belum memilih lapangan (misalnya 0 = belum dipilih)
+    private void updateJamUI(List<String> jamTerbooking) {
         if (currentLapangan == 0) {
             timeContainer.setVisibility(View.GONE);
-            TextView textInfo = getView().findViewById(R.id.pilih_lapangan); // Pastikan ID sesuai
+            TextView textInfo = getView().findViewById(R.id.pilih_lapangan);
             textInfo.setVisibility(View.VISIBLE);
-            return; // keluar dari fungsi
+            return;
         }
 
-        // Jika lapangan sudah dipilih
         timeContainer.setVisibility(View.VISIBLE);
         TextView textInfo = getView().findViewById(R.id.pilih_lapangan);
         textInfo.setVisibility(View.GONE);
 
-        Set<String> bookedTimes = currentLapangan == 1
-                ? bookedTimesLapangan1.getOrDefault(tanggalDipilih, new HashSet<>())
-                : bookedTimesLapangan2.getOrDefault(tanggalDipilih, new HashSet<>());
+        // Simpan data booking untuk diproses di updateTimeButtonStatus()
+        this.jamTerbooking = new HashSet<>(jamTerbooking); // Gunakan Set untuk lookup cepat
 
-        Set<String> selectedTimes = currentLapangan == 1
-                ? selectedTimesLapangan1
-                : selectedTimesLapangan2;
-
-        for (int i = 0; i < timeContainer.getChildCount(); i++) {
-            View child = timeContainer.getChildAt(i);
-            if (child instanceof Button) {
-                Button jamBtn = (Button) child;
-                String jam = jamBtn.getText().toString();
-
-                if (bookedTimes.contains(jam)) {
-                    jamBtn.setEnabled(false);
-                    jamBtn.setBackgroundTintList(ColorStateList.valueOf(Color.GRAY));
-                } else {
-                    jamBtn.setEnabled(true);
-                    if (selectedTimes.contains(jam)) {
-                        jamBtn.setBackgroundTintList(ColorStateList.valueOf(Color.GREEN));
-                    } else {
-                        jamBtn.setBackgroundTintList(ColorStateList.valueOf(Color.WHITE));
-                    }
-                }
-            }
-        }
+        // Panggil sekali saja untuk seluruh tombol
+        updateTimeButtonStatus(tanggalDipilih);
     }
 
 
@@ -534,11 +491,10 @@ public class second extends Fragment {
         bookedMap.put(tanggalDipilih, bookedSet);
 
             updateHargaCheckout();
-
+        List<String> jamTerbooking = new ArrayList<>();
         // Refresh UI
-        updateJamUI();
+        updateJamUI(jamTerbooking);
     }
-
 
     private void highlightLapanganButton(Button selected, Button unselected) {
         selected.getBackgroundTintList();
@@ -549,9 +505,17 @@ public class second extends Fragment {
     }
 
     private void generateTimeButtons(List<String> timeList) {
+        timeContainer.removeAllViews(); // Bersihkan dulu sebelum generate ulang
+
+        SimpleDateFormat sdfJam = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
+        SimpleDateFormat sdfTanggal = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        String today = sdfTanggal.format(new Date());
+        Date now = new Date(); // waktu saat ini
+
         for (String time : timeList) {
             Button btn = new Button(getContext());
             btn.setText(time);
+            btn.setBackgroundResource(R.drawable.background_stack);
             btn.setTextColor(Color.BLACK);
 
             FlexboxLayout.LayoutParams params = new FlexboxLayout.LayoutParams(
@@ -561,25 +525,58 @@ public class second extends Fragment {
             params.setMargins(8, 8, 8, 8);
             btn.setLayoutParams(params);
 
-            btn.setOnClickListener(v -> {
-                Button clickedButton = (Button) v;
-                String jam = clickedButton.getText().toString();
+            boolean disable = false;
 
-                if (selectedTimes.contains(jam)) {
-                    selectedTimes.remove(jam);
-                    clickedButton.setBackgroundColor(Color.BLACK); // tidak dipilih
-                } else {
-                    selectedTimes.add(jam);
-                    clickedButton.setBackgroundColor(Color.GREEN); // dipilih
+            if (tanggalDipilih == null || tanggalDipilih.isEmpty()) {
+                disable = true;
+            } else if (tanggalDipilih.equals(today)) {
+                try {
+                    Date timeDate = sdfJam.parse(time);
+                    Calendar nowCal = Calendar.getInstance();
+                    Calendar jamCal = Calendar.getInstance();
+                    jamCal.setTime(timeDate);
+
+                    Calendar targetCal = Calendar.getInstance();
+                    targetCal.set(Calendar.YEAR, nowCal.get(Calendar.YEAR));
+                    targetCal.set(Calendar.MONTH, nowCal.get(Calendar.MONTH));
+                    targetCal.set(Calendar.DAY_OF_MONTH, nowCal.get(Calendar.DAY_OF_MONTH));
+                    targetCal.set(Calendar.HOUR_OF_DAY, jamCal.get(Calendar.HOUR_OF_DAY));
+                    targetCal.set(Calendar.MINUTE, jamCal.get(Calendar.MINUTE));
+                    targetCal.set(Calendar.SECOND, 0);
+                    targetCal.set(Calendar.MILLISECOND, 0);
+
+                    if (nowCal.after(targetCal)) {
+                        disable = true;
+                    }
+                } catch (ParseException e) {
+                    e.printStackTrace();
                 }
-                pilihJam((Button) v);
-                Log.d("SelectedTimes", selectedTimes.toString());
-            });
+            }
 
+
+                btn.setEnabled(!disable);
+            btn.setAlpha(disable ? 0.5f : 1.0f);
+
+            btn.setOnClickListener(v -> {
+                if (btn.isEnabled()) {
+                    String jam = btn.getText().toString();
+                    if (selectedTimes.contains(jam)) {
+                        selectedTimes.remove(jam);
+                        btn.setBackgroundResource(R.drawable.background_stack);
+                    } else {
+                        selectedTimes.add(jam);
+                        btn.setBackgroundColor(Color.GREEN);
+                    }
+                    pilihJam(btn);
+                    Log.d("SelectedTimes", selectedTimes.toString());
+                }
+            });
 
             timeContainer.addView(btn);
         }
     }
+
+
 
 
     private void resetAllSelections() {
@@ -616,18 +613,15 @@ public class second extends Fragment {
 
         // Tampilkan container tombol jam
         timeContainer.setVisibility(View.VISIBLE);
-
+        List<String> jamTerbooking = new ArrayList<>();
         // Update tampilan jam sesuai lapangan yang dipilih
-        updateJamUI();
+        updateJamUI(jamTerbooking);
 
         // Highlight lapangan aktif
         Button btnLapangan1 = getView().findViewById(R.id.lap1);
         Button btnLapangan2 = getView().findViewById(R.id.lap2);
         highlightLapanganButton(lapangan == 1 ? btnLapangan1 : btnLapangan2,
                 lapangan == 1 ? btnLapangan2 : btnLapangan1);
+
     }
-
-
-
-
 }

@@ -244,10 +244,10 @@ public class third extends Fragment {
                             String totalBayar = bookingJson.getString("bayar");
                             String totalJam = bookingJson.getString("jam");
                             String idTransaksi = bookingJson.getString("id");
-                            String orderId = bookingJson.getString("order_id");
+                            String lapangan = bookingJson.getString("lapangan");
                             String status = bookingJson.getString("status_pembayaran");
                             Log.d("ParseTransaksi", "Item ke-" + i + ": " + nama + ", bayar: " + totalBayar);
-                            transaksiList.add(new Transaksi(nama, totalBayar, totalJam, idTransaksi, status, orderId));
+                            transaksiList.add(new Transaksi(nama, totalBayar, totalJam, idTransaksi, status, lapangan));
                         }
 
                         adapter.notifyDataSetChanged();

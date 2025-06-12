@@ -55,9 +55,10 @@ public class TransaksiAdapter extends RecyclerView.Adapter<TransaksiAdapter.View
         Transaksi trx = transaksiList.get(position);
 
         Log.d("BindView", "Menampilkan: " + trx.getNama());
-        holder.txtNama.setText("Nama: " + trx.getNama());
-        holder.txtBayar.setText("Bayar: " + trx.getBayar());
-        holder.txtJam.setText("Jam: " + trx.getJam());
+        holder.txtNama.setText(trx.getNama());
+        holder.txtBayar.setText(trx.getBayar());
+        holder.txtJam.setText(trx.getJam());
+        holder.txtlapangan.setText("lapangan   " + trx.getLapangan());
 
         // Status Pembayaran
         String status = trx.getStatus() != null ? trx.getStatus().toLowerCase() : "";
@@ -111,7 +112,7 @@ public class TransaksiAdapter extends RecyclerView.Adapter<TransaksiAdapter.View
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        TextView txtNama, txtBayar, txtJam, txtStatus, txtId, txtorderId;
+        TextView txtNama, txtBayar, txtJam, txtStatus, txtId, txtlapangan;
         Button btnBayar;
         public ViewHolder(View itemView) {
             super(itemView);
@@ -120,7 +121,7 @@ public class TransaksiAdapter extends RecyclerView.Adapter<TransaksiAdapter.View
             txtJam = itemView.findViewById(R.id.total_jam);
             txtStatus = itemView.findViewById(R.id.updatestatus);
             txtId = itemView.findViewById(R.id.idTransaksi);
-            txtorderId = itemView.findViewById(R.id.OrderID);
+            txtlapangan = itemView.findViewById(R.id.lapangan);
             btnBayar = itemView.findViewById(R.id.btnBayar);
         }
     }
