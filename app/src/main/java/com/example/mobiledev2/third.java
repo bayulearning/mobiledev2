@@ -254,12 +254,17 @@ public class third extends Fragment {
 
                     } catch (JSONException e) {
                         e.printStackTrace();
-                        Toast.makeText(getActivity(), "Gagal memproses data JSON", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(requireContext(), "Gagal memproses data JSON", Toast.LENGTH_SHORT).show();
                     }
                 },
                 error -> {
-                    Toast.makeText(getActivity(), "Error fetching data", Toast.LENGTH_SHORT).show();
-                });
+                    if (isAdded()) {
+                        Toast.makeText(requireContext(), "Error fetching data", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Log.w("ThirdFragment", "Fragment tidak lagi terhubung saat menerima error.");
+                    }
+
+    });
 
         queue.add(stringRequest);
     }

@@ -78,7 +78,7 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView
-                android:id="@+id/textView8"
+                android:id="@+id/usernama"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/blinker_semibold"
@@ -87,7 +87,7 @@
                 android:textSize="24sp" />
 
             <TextView
-                android:id="@+id/textView17"
+                android:id="@+id/useremail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/blinker_light"
@@ -120,111 +120,122 @@
                 android:layout_width="match_parent"
                 android:layout_height="180dp">
 
-                <ImageButton
-                    android:id="@+id/imageButton3"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_marginStart="200dp"
+                <LinearLayout
+                    android:id="@+id/relativeLayout3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.014"
+                    tools:layout_editor_absoluteX="0dp">
+
+                    <ImageView
+                        android:id="@+id/imageView8"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_marginStart="32dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:src="@drawable/darkmode" />
+
+                    <TextView
+                        android:id="@+id/textView20"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="14dp"
+
+                        android:layout_toEndOf="@+id/imageView8"
+                        android:fontFamily="@font/blinker_bold"
+                        android:text="Mode"
+                        android:textSize="12sp" />
+
+                    <Switch
+                        android:id="@+id/mode"
+                        android:contentDescription="modeapp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="220dp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/linearLayout3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:src="@drawable/arrow"
-                    app:layout_constraintStart_toEndOf="@+id/textView23"
-                    app:layout_constraintTop_toBottomOf="@+id/imageButton2" />
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/relativeLayout3"
+                    app:layout_constraintVertical_bias="0.0"
+                    tools:layout_editor_absoluteX="0dp">
 
-                <TextView
-                    android:id="@+id/textView23"
-                    android:layout_width="wrap_content"
+                    <ImageView
+                        android:id="@+id/imageView11"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_marginStart="32dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:src="@drawable/bahasa" />
+
+                    <TextView
+                        android:id="@+id/textView23"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:fontFamily="@font/blinker_bold"
+                        android:text="Language"
+                        android:textSize="12sp" />
+
+                    <ImageButton
+                        android:id="@+id/btnlanguage"
+                        android:contentDescription="bahasa"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_marginStart="200dp"
+                        android:src="@drawable/arrow" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="24dp"
-                    android:fontFamily="@font/blinker_bold"
-                    android:text="Language"
-                    android:textSize="12sp"
-                    app:layout_constraintStart_toEndOf="@+id/imageView11"
-                    app:layout_constraintTop_toBottomOf="@+id/textView22" />
-
-                <ImageView
-                    android:id="@+id/imageView11"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_marginStart="32dp"
                     android:layout_marginTop="8dp"
-                    android:src="@drawable/bahasa"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/imageView10" />
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/linearLayout3"
+                    app:layout_constraintVertical_bias="0.0"
+                    tools:layout_editor_absoluteX="0dp">
 
-                <TextView
-                    android:id="@+id/textView21"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:fontFamily="@font/blinker_bold"
-                    android:text="Dark Light"
-                    android:textSize="6sp"
-                    app:layout_constraintStart_toEndOf="@+id/imageView8"
-                    app:layout_constraintTop_toBottomOf="@+id/textView20" />
+                    <ImageView
+                        android:id="@+id/imageView10"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_marginStart="32dp"
+                        android:layout_marginBottom="5dp"
+                        android:layout_marginTop="5dp"
+                        android:src="@drawable/key" />
 
-                <ImageView
-                    android:id="@+id/imageView8"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_marginStart="32dp"
-                    android:layout_marginTop="24dp"
-                    android:src="@drawable/darkmode"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    <TextView
+                        android:id="@+id/textView22"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:fontFamily="@font/blinker_bold"
+                        android:text="Change Password"
+                        android:textSize="12sp" />
 
-                <TextView
-                    android:id="@+id/textView20"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="24dp"
-                    android:fontFamily="@font/blinker_bold"
-                    android:text="Mode"
-                    android:textSize="12sp"
-                    app:layout_constraintStart_toEndOf="@+id/imageView8"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <Switch
-                    android:id="@+id/switch1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="320dp"
-                    android:layout_marginTop="24dp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <ImageView
-                    android:id="@+id/imageView10"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_marginStart="32dp"
-                    android:layout_marginTop="8dp"
-                    android:src="@drawable/key"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/imageView8" />
-
-                <TextView
-                    android:id="@+id/textView22"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="24dp"
-                    android:fontFamily="@font/blinker_bold"
-                    android:text="Change Password"
-                    android:textSize="12sp"
-                    app:layout_constraintStart_toEndOf="@+id/imageView10"
-                    app:layout_constraintTop_toBottomOf="@+id/textView21" />
-
-                <ImageButton
-                    android:id="@+id/imageButton2"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_marginStart="160dp"
-                    android:layout_marginTop="8dp"
-                    android:src="@drawable/arrow"
-                    app:layout_constraintStart_toEndOf="@+id/textView22"
-                    app:layout_constraintTop_toBottomOf="@+id/switch1" />
+                    <ImageButton
+                        android:id="@+id/btnchangepass"
+                        android:contentDescription="change"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_marginStart="160dp"
+                        android:src="@drawable/arrow" />
+                </LinearLayout>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -254,133 +265,153 @@
                 android:layout_height="180dp">
 
 
-                <ImageView
-                    android:id="@+id/imageView12"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_marginStart="32dp"
-                    android:layout_marginTop="24dp"
-                    android:src="@drawable/info"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:id="@+id/textView29"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:id="@+id/linearLayout4"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="24dp"
-                    android:fontFamily="@font/blinker_bold"
-                    android:text="Share This App"
-                    android:textSize="12sp"
-                    app:layout_constraintStart_toEndOf="@+id/imageView15"
-                    app:layout_constraintTop_toBottomOf="@+id/textView28" />
-
-                <ImageButton
-                    android:id="@+id/imageButton7"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_marginStart="195dp"
                     android:layout_marginTop="8dp"
-                    android:src="@drawable/arrow"
-                    app:layout_constraintStart_toEndOf="@+id/textView26"
-                    app:layout_constraintTop_toBottomOf="@+id/imageButton6" />
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.0"
+                    tools:layout_editor_absoluteX="-16dp">
 
-                <ImageView
-                    android:id="@+id/imageView13"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_marginStart="32dp"
-                    android:layout_marginTop="8dp"
-                    android:src="@drawable/term"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/imageView12" />
+                    <ImageView
+                        android:id="@+id/imageView15"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_marginStart="32dp"
+                        android:src="@drawable/share" />
 
-                <TextView
-                    android:id="@+id/textView27"
-                    android:layout_width="wrap_content"
+                    <TextView
+                        android:id="@+id/textView29"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:fontFamily="@font/blinker_bold"
+                        android:text="Share This App"
+                        android:textSize="12sp" />
+
+                    <ImageButton
+                        android:id="@+id/btnshare"
+                        android:contentDescription="Share"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_marginStart="175dp"
+                        android:src="@drawable/arrow" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/linearLayout6"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="24dp"
-                    android:fontFamily="@font/blinker_bold"
-                    android:text="Term Condition"
-                    android:textSize="12sp"
-                    app:layout_constraintStart_toEndOf="@+id/imageView12"
-                    app:layout_constraintTop_toBottomOf="@+id/textView26" />
-
-                <ImageButton
-                    android:id="@+id/imageButton5"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_marginStart="196dp"
                     android:layout_marginTop="8dp"
-                    android:src="@drawable/arrow"
-                    app:layout_constraintStart_toEndOf="@+id/textView26"
-                    app:layout_constraintTop_toBottomOf="@+id/imageButton4" />
+                    android:layout_marginBottom="28dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/linearLayout4"
+                    app:layout_constraintVertical_bias="0.0"
+                    tools:layout_editor_absoluteX="0dp">
 
-                <ImageView
-                    android:id="@+id/imageView14"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_marginStart="32dp"
-                    android:layout_marginTop="8dp"
-                    android:src="@drawable/privacy"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/imageView13" />
+                    <ImageView
+                        android:id="@+id/imageView14"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_marginStart="32dp"
+                        android:src="@drawable/privacy" />
 
-                <TextView
-                    android:id="@+id/textView28"
-                    android:layout_width="wrap_content"
+                    <TextView
+                        android:id="@+id/textView28"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:fontFamily="@font/blinker_bold"
+                        android:text="Privacy Policy"
+                        android:textSize="12sp" />
+
+                    <ImageButton
+                        android:id="@+id/btnpolicy"
+                        android:contentDescription="policy"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_marginStart="179dp"
+                        android:src="@drawable/arrow" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/linearLayout5"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="116dp"
-                    android:fontFamily="@font/blinker_bold"
-                    android:text="Privacy Policy"
-                    android:textSize="12sp"
-                    app:layout_constraintStart_toEndOf="@+id/imageView14"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <ImageButton
-                    android:id="@+id/imageButton6"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_marginStart="180dp"
                     android:layout_marginTop="8dp"
-                    android:src="@drawable/arrow"
-                    app:layout_constraintStart_toEndOf="@+id/textView28"
-                    app:layout_constraintTop_toBottomOf="@+id/imageButton5" />
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/linearLayout6"
+                    app:layout_constraintVertical_bias="0.0"
+                    tools:layout_editor_absoluteX="0dp">
 
-                <ImageView
-                    android:id="@+id/imageView15"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_marginStart="32dp"
-                    android:layout_marginTop="8dp"
-                    android:src="@drawable/share"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/imageView14" />
+                    <ImageView
+                        android:id="@+id/imageView13"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_marginStart="32dp"
+                        android:src="@drawable/term" />
 
-                <TextView
-                    android:id="@+id/textView26"
-                    android:layout_width="wrap_content"
+                    <TextView
+                        android:id="@+id/textView27"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:fontFamily="@font/blinker_bold"
+                        android:text="Term Condition"
+                        android:textSize="12sp" />
+
+                    <ImageButton
+                        android:id="@+id/btnterm"
+                        android:contentDescription="term"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_marginStart="173dp"
+                        android:src="@drawable/arrow" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="32dp"
-                    android:fontFamily="@font/blinker_bold"
-                    android:text="About App"
-                    android:textSize="12sp"
-                    app:layout_constraintStart_toEndOf="@+id/imageView12"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    android:layout_marginTop="8dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/linearLayout5"
+                    app:layout_constraintVertical_bias="0.0"
+                    tools:layout_editor_absoluteX="0dp">
 
-                <ImageButton
-                    android:id="@+id/imageButton4"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_marginStart="195dp"
-                    android:layout_marginTop="24dp"
-                    android:src="@drawable/arrow"
-                    app:layout_constraintStart_toEndOf="@+id/textView26"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    <ImageView
+                        android:id="@+id/imageView12"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_marginStart="32dp"
+                        android:src="@drawable/info" />
+
+                    <TextView
+                        android:id="@+id/textView26"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:fontFamily="@font/blinker_bold"
+                        android:text="About App"
+                        android:textSize="12sp" />
+
+                    <ImageButton
+                        android:id="@+id/btnabout"
+                        android:contentDescription="About"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_marginStart="195dp"
+                        android:src="@drawable/arrow" />
+                </LinearLayout>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

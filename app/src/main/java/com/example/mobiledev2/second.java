@@ -143,7 +143,7 @@ public class second extends Fragment {
         Button btnReset = view.findViewById(R.id.btnreset);
 
         // Awal, sembunyikan jam
-        timeContainer.setVisibility(View.VISIBLE);
+        timeContainer.setVisibility(View.GONE);
 
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
         transaction.replace(R.id.hargacontainer, new HargaFragment());

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="BottomNavTextStyle" parent="TextAppearance.MaterialComponents.Caption">
+        <item name="android:textSize">12sp</item>
+        <item name="android:fontFamily">@font/blinker_extralight</item>
+        <item name="android:lineSpacingExtra">4dp</item> <!-- Atur spasi bawah label -->
+    </style>
+    <style name="BottomNavigationCustomStyle" parent="Widget.MaterialComponents.BottomNavigationView">
+        <item name="itemIconSize">24dp</item>
+        <item name="itemTextAppearanceActive">@style/BottomNavTextStyle</item>
+        <item name="itemTextAppearanceInactive">@style/BottomNavTextStyle</item>
+<!--        <item name="labelVisibilityMode">labeled</item> &lt;!&ndash; tampilkan teks selalu &ndash;&gt;-->
+    </style>
+
+</resources>
