@@ -11,7 +11,7 @@ https://www.figma.com/design/pZ9oM0kWzio4kEKMzpEfuk/Figma-basics?node-id=1669-16
 
 Total Progress Dari Project Kami Sebesar
 
-### [xxxxxxxxxxxxxxxxxxxxxxxxxxxx--------------] 72,33%
+### [xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx----] 89%
 
 # Update 1 Fitur Login dan Registrasi
 
@@ -106,3 +106,14 @@ Total Progress Dari Project Kami Sebesar
 ### 16 Maret 2025
 
 - Desain Prosedur Reservasi [x] 2 Mei 2025
+
+# Update Final
+
+## Bagus Ardiawan
+
+- Penerapan fungsi menu setting [x] 14 Juni 2025
+
+## Adimas Bayu Aditya
+
+- Tambah fungsi logout akun [x] 12 Juni 2025
+- Informasi pengguna (nama,email) [x] 12 Juni 2025

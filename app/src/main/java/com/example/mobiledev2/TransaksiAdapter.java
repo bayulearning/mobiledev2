@@ -58,7 +58,8 @@ public class TransaksiAdapter extends RecyclerView.Adapter<TransaksiAdapter.View
         holder.txtNama.setText(trx.getNama());
         holder.txtBayar.setText(trx.getBayar());
         holder.txtJam.setText(trx.getJam());
-        holder.txtlapangan.setText("lapangan   " + trx.getLapangan());
+        holder.txtlapangan.setText("lapangan   " + trx.getLapangan() +"\n"+ trx.getTanggal());
+//        holder.txttanggal.setText(trx.getTanggal());
 
         // Status Pembayaran
         String status = trx.getStatus() != null ? trx.getStatus().toLowerCase() : "";
@@ -112,7 +113,7 @@ public class TransaksiAdapter extends RecyclerView.Adapter<TransaksiAdapter.View
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        TextView txtNama, txtBayar, txtJam, txtStatus, txtId, txtlapangan;
+        TextView txtNama, txtBayar, txtJam, txtStatus, txtId, txtlapangan, txttanggal;
         Button btnBayar;
         public ViewHolder(View itemView) {
             super(itemView);
@@ -122,7 +123,9 @@ public class TransaksiAdapter extends RecyclerView.Adapter<TransaksiAdapter.View
             txtStatus = itemView.findViewById(R.id.updatestatus);
             txtId = itemView.findViewById(R.id.idTransaksi);
             txtlapangan = itemView.findViewById(R.id.lapangan);
+            txttanggal = itemView.findViewById(R.id.tanggal);
             btnBayar = itemView.findViewById(R.id.btnBayar);
+
         }
     }
 

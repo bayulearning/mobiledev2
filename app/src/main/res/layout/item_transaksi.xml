@@ -61,7 +61,8 @@
             card_view:layout_constraintBottom_toTopOf="@+id/btnBayar"
             card_view:layout_constraintEnd_toEndOf="parent"
             card_view:layout_constraintHorizontal_bias="0.0"
-            card_view:layout_constraintStart_toStartOf="parent">
+            card_view:layout_constraintStart_toStartOf="parent"
+            card_view:layout_constraintTop_toTopOf="parent">
 
             <TextView
                 android:id="@+id/textView6"
@@ -126,12 +127,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
+
             card_view:layout_constraintBottom_toBottomOf="parent"
             card_view:layout_constraintEnd_toEndOf="parent"
-            card_view:layout_constraintHorizontal_bias="0.312"
+            card_view:layout_constraintHorizontal_bias="0.29"
             card_view:layout_constraintStart_toEndOf="@+id/linearLayout"
             card_view:layout_constraintTop_toTopOf="parent"
-            card_view:layout_constraintVertical_bias="0.12">
+            card_view:layout_constraintVertical_bias="0.08">
 
             <TextView
                 android:id="@+id/nama"
@@ -175,6 +177,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/linearLayout7"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="189dp"
@@ -189,10 +192,9 @@
                 android:id="@+id/lapangan"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:layout_gravity="left"
                 android:fontFamily="@font/blinker_bold"
-                android:text="TextView"
-                android:layout_gravity="center_horizontal"
-                />
+                android:text="TextView" />
 
             <TextView
                 android:id="@+id/updatestatus"
@@ -201,10 +203,23 @@
                 android:background="@drawable/background_status"
                 android:fontFamily="@font/blinker_bold"
                 android:padding="8dp"
-                android:textAlignment="center"
-                android:text="" />
+                android:text=""
+                android:textAlignment="center" />
 
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/tanggal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:fontFamily="@font/blinker_bold"
+            card_view:layout_constraintBottom_toBottomOf="parent"
+            card_view:layout_constraintEnd_toEndOf="parent"
+            card_view:layout_constraintHorizontal_bias="0.448"
+            card_view:layout_constraintStart_toEndOf="@+id/linearLayout7"
+            card_view:layout_constraintTop_toBottomOf="@+id/linearLayout2"
+            card_view:layout_constraintVertical_bias="0.263" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

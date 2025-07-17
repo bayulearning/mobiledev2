@@ -1,7 +1,10 @@
 package com.example.mobiledev2;
 
+import static android.content.Context.MODE_PRIVATE;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
@@ -95,8 +98,14 @@ public class fourth extends Fragment {
         ImageButton policy = view.findViewById(R.id.btnpolicy);
         ImageButton term = view.findViewById(R.id.btnterm);
         ImageButton about = view.findViewById(R.id.btnabout);
-
-        SharedPreferences prefs = getActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        @SuppressLint({"MissingInflatedId", "LocalSuppress"}) Button logout = view.findViewById(R.id.logout);
+logout.setOnClickListener(new View.OnClickListener() {
+    @Override
+    public void onClick(View v) {
+        logout();
+    }
+});
+        SharedPreferences prefs = getActivity().getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         boolean IsDarkMode = prefs.getBoolean(KEY_DARK_MODE,false);
         switchmode.setChecked(IsDarkMode);
 
@@ -117,8 +126,23 @@ simpanprofil();
         return view;
     }
 
+    private void logout() {
+        // Hapus data login
+        SharedPreferences preferences = getActivity().getSharedPreferences("UserPrefs", MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.clear(); // atau gunakan remove("key") jika hanya ingin hapus sebagian
+        editor.apply();
+
+        // Arahkan ke halaman login dan hapus back stack
+        Intent intent = new Intent(getActivity(), LoginPage.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // Penting untuk tidak bisa kembali
+        startActivity(intent);
+        getActivity().finish(); // Tutup activity sekarang
+    }
+
+
     public void simpanprofil() {
-        SharedPreferences sharedPref = getActivity().getSharedPreferences("UserSession", Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = getActivity().getSharedPreferences("UserSession", MODE_PRIVATE);
         String username = sharedPref.getString("username", "");
         Log.d("DebugUsername", "Username dari SharedPreferences: " + username);
 
@@ -135,40 +159,47 @@ simpanprofil();
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
+                        if (!isAdded() || getView() == null) return; // penting: hindari crash
+
                         try {
                             JSONObject jsonObject = new JSONObject(response);
 
                             if (jsonObject.getBoolean("success")) {
                                 JSONArray dataArray = jsonObject.getJSONArray("data");
 
-                                // Ambil username dari SharedPreferences
-                                SharedPreferences sharedPref = getActivity().getSharedPreferences("UserSession", Context.MODE_PRIVATE);
+                                SharedPreferences sharedPref = requireActivity().getSharedPreferences("UserSession", Context.MODE_PRIVATE);
                                 String usernameSession = sharedPref.getString("username", "");
 
                                 for (int i = 0; i < dataArray.length(); i++) {
                                     JSONObject user = dataArray.getJSONObject(i);
                                     String username = user.getString("username");
 
-                                    // Cocokkan dengan user yang sedang login
                                     if (username.equals(usernameSession)) {
                                         String email = user.getString("email");
 
-                                        // Set ke TextView
-                                        TextView textUsername = getView().findViewById(R.id.usernama);
-                                        TextView textEmail = getView().findViewById(R.id.useremail);
+                                        // Pastikan view tidak null
+                                        View view = getView();
+                                        if (view != null) {
+                                            TextView textUsername = view.findViewById(R.id.usernama);
+                                            TextView textEmail = view.findViewById(R.id.useremail);
 
-                                        textUsername.setText(username);
-                                        textEmail.setText(email);
-                                        break; // data ditemukan, keluar dari loop
+                                            textUsername.setText(username);
+                                            textEmail.setText(email);
+                                        }
+                                        break;
                                     }
                                 }
                             } else {
-                                Toast.makeText(getActivity(), "Data user tidak ditemukan", Toast.LENGTH_SHORT).show();
+                                if (getActivity() != null) {
+                                    Toast.makeText(getActivity(), "Data user tidak ditemukan", Toast.LENGTH_SHORT).show();
+                                }
                             }
 
                         } catch (JSONException e) {
                             e.printStackTrace();
-                            Toast.makeText(getActivity(), "Error parsing JSON", Toast.LENGTH_SHORT).show();
+                            if (getActivity() != null) {
+                                Toast.makeText(getActivity(), "Error parsing JSON", Toast.LENGTH_SHORT).show();
+                            }
                         }
                     }
 
